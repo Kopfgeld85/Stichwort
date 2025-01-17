@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Stichwortsuche</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.15.349/pdf.min.js"></script>
+    <script src="https://unpkg.com/mammoth@1.6.0/mammoth.browser.min.js"></script>
+    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Menü -->
+    <div id="menu">
+        <h2>Menü</h2>
+        <button onclick="showSearch()">Stichwortsuche</button>
+        <button id="showDatabaseButton" onclick="showDatabase()" disabled>Datenbank</button>
+        <button onclick="showSection('errorLogsSection')" class="menu-button">Fehler-Logs</button>
+    </div>
+
+    <!-- Stichwortsuche -->
+    <div id="content">
+        <div id="searchSection">
+            <h1>PDF Stichwortsuche</h1>
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Stichwörter eingeben, getrennt durch Komma...">
+                <button onclick="searchKeyword()">Suchen</button>
+                <button id="translateButton" onclick="translateResults()" disabled>Übersetzen</button>
+                <div class="filter-section">
+                    <select id="fileTypeFilter" onchange="filterByFileType()">
+                        <option value="all">Alle Dateien</option>
+                        <option value="pdf">PDF Dateien</option>
+                        <option value="word">Word Dateien</option>
+                        <option value="excel">Excel Dateien</option>
+                        <option value="text">Textdateien</option>
+                    </select>
+                    <input type="text" id="filterInput" placeholder="Filter nach Normen oder Kapiteln...">
+                    <button onclick="filterResults()">Filtern</button>
+                </div>
+            </div>
+            <br><br>
+            <button onclick="exportResults()">Ergebnisse exportieren</button>
+            <br><br>
+            <div id="results"></div>
+        </div>
+
+        <!-- Datenbank -->
+        <div id="databaseSection" class="database-actions">
+            <h2>Gespeicherte Dateien</h2>
+            <div class="database-buttons">
+                <div class="upload-section">
+                    <button onclick="document.getElementById('fileInput').click()" class="primary-button">Dateien auswählen</button>
+                    <input type="file" id="fileInput" multiple style="display: none">
+                    
+                    <!-- Progress Container -->
+                    <div id="progressContainer" style="display: none;">
+                        <div class="progress-info">
+                            <span id="currentFileName">Verarbeite: </span>
+                            <span id="progressStatus">0/0 Dateien</span>
+                            <span id="timeEstimate"></span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div id="progressBar" class="progress-bar"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="danger-section">
+                    <button onclick="resetDatabase()" class="danger-button">Alle Dokumente löschen</button>
+                </div>
+            </div>
+            <div id="fileList"></div>
+        </div>
+
+        <!-- Fehler-Logs -->
+        <div id="errorLogsSection" style="display: none;" class="section">
+            <h2>Fehler-Logs</h2>
+            <div class="error-logs-controls">
+                <button onclick="downloadErrorLogs()" class="primary-button">Fehler-Logs herunterladen</button>
+                <button onclick="clearErrorLogs()" class="secondary-button">Logs löschen</button>
+            </div>
+            <div id="errorLogsList" class="error-logs-list">
+                <!-- Hier werden die Fehler-Logs dynamisch eingefügt -->
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

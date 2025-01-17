@@ -7,43 +7,6 @@ let errorLogs = [];
 // Konfigurieren Sie den Worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.15.349/pdf.worker.min.js';
 
-// Konfiguration
-const config = {
-    tempDir: 'C:\\temp\\Stichwortsuche',  // Temporäres Verzeichnis für Dateien
-    maxFileSize: 100 * 1024 * 1024,       // Maximale Dateigröße (100 MB)
-    supportedFileTypes: {
-        'application/pdf': '.pdf',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document': '.docx',
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': '.xlsx',
-        'text/plain': '.txt'
-    }
-};
-
-// Funktion zum Erstellen des Temp-Verzeichnisses
-async function ensureTempDir() {
-    try {
-        // Prüfe, ob das Verzeichnis existiert
-        await new Promise((resolve, reject) => {
-            const fs = window.require('fs');
-            if (!fs.existsSync(config.tempDir)) {
-                fs.mkdirSync(config.tempDir, { recursive: true });
-            }
-            resolve();
-        });
-    } catch (error) {
-        console.warn('Temp-Verzeichnis konnte nicht erstellt werden:', error);
-        // Fallback: Verwende einen relativen Pfad im Projektverzeichnis
-        config.tempDir = './temp';
-        try {
-            if (!fs.existsSync(config.tempDir)) {
-                fs.mkdirSync(config.tempDir, { recursive: true });
-            }
-        } catch (error) {
-            console.error('Konnte kein Temp-Verzeichnis erstellen:', error);
-        }
-    }
-}
-
 // Datenbank initialisieren
 function initDB() {
 
@@ -69,11 +32,9 @@ function initDB() {
     };
 }
 
-// Initialisiere die Anwendung
-window.onload = async function() {
-    await ensureTempDir();
+// Initialisiere die Datenbank beim Laden der Seite
+window.onload = function() {
     initDB();
-    loadErrorLogs();
 };
 
 // Lade die Datei-Liste aus der Datenbank
@@ -489,7 +450,7 @@ async function openFileInExplorer(fileName) {
             const fileExtension = fileName.split('.').pop().toLowerCase();
             
             // Temporäres Verzeichnis für die Datei erstellen
-            const tempDir = config.tempDir;
+            const tempDir = 'C:\\temp\\Stichwortsuche';
             const filePath = `${tempDir}\\${fileName}`;
             
             // Blob mit korrektem MIME-Type erstellen
